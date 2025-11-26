@@ -15,15 +15,22 @@ grid = [
 
 points = [10, 14, 16, 20]
 
-bonuses = ["cross_blue", "four_orange", "cross_green", "fox", "+1"]
+actions = ["extra_die"]
+
+bonuses = ["cross_blue", "four_orange", "cross_green", "fox"]
 
 
 class Yellow:
 
-    def __init__(self, grid=grid, points=points, bonuses=bonuses):
+    def __init__(self,
+                 grid=grid,
+                 points=points,
+                 actions=actions,
+                 bonuses=bonuses):
 
         self.grid = grid
         self.points = points
+        self.actions = actions
         self.bonuses = bonuses
         pass
 
