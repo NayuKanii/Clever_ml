@@ -6,27 +6,27 @@ the number.
 '''
 
 
-grid = [
+yellow_grid = [
     [3, 6, 5, 'x'],
     [2, 1, 'x', 5],
     [1, 'x', 2, 4],
     ['x', 3, 4, 6],
     ]
 
-points = [10, 14, 16, 20]
+yellow_points = [10, 14, 16, 20]
 
-actions = ["extra_die"]
+yellow_actions = ["extra_die"]
 
-bonuses = ["cross_blue", "four_orange", "cross_green", "fox"]
+yellow_bonuses = ["cross_blue", "four_orange", "cross_green", "fox"]
 
 
 class Yellow:
 
     def __init__(self,
-                 grid=grid,
-                 points=points,
-                 actions=actions,
-                 bonuses=bonuses):
+                 grid=yellow_grid,
+                 points=yellow_points,
+                 actions=yellow_actions,
+                 bonuses=yellow_bonuses):
 
         self.grid = grid
         self.points = points

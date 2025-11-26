@@ -6,22 +6,23 @@ boxes crossed off. Actions and bonuses are obtained by crossing full columns
 and rows.
 '''
 
-grid = [['', 2, 3, 4],
-        [5, 6, 7, 8,],
-        [9, 10, 11, 12]]
+blue_grid = [['', 2, 3, 4],
+             [5, 6, 7, 8,],
+             [9, 10, 11, 12]]
 
-available_points = {1: 1, 2: 2, 3: 4, 4: 7, 5: 11, 6: 16,
-                    7: 22, 8: 29, 9: 37, 10: 36, 11: 35}
+blue_available_points = {1: 1, 2: 2, 3: 4, 4: 7, 5: 11, 6: 16,
+                         7: 22, 8: 29, 9: 37, 10: 36, 11: 35}
 
-actions = ["reroll", "extra_die"]
+blue_actions = ["reroll", "extra_die"]
 
-bonuses = ["five_orange", "cross_yellow", "fox", "cross_green", "six_purple"]
+blue_bonuses = ["five_orange", "cross_yellow", "fox", "cross_green",
+                "six_purple"]
 
 
 class Blue:
 
-    def __init__(self, grid=grid, available_points=available_points,
-                 actions=actions, bonuses=bonuses):
+    def __init__(self, grid=blue_grid, available_points=blue_available_points,
+                 actions=blue_actions, bonuses=blue_bonuses):
 
         self.grid = grid
         self.available_points = available_points
