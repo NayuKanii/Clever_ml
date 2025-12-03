@@ -1,4 +1,4 @@
-from clever import green
+from clever.categories import green
 
 g1 = green.Green()
 

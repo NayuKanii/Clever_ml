@@ -1,2 +1,3 @@
-./clever/__pycache__
-./tests/__pycache__
+*.pyc
+clever/__pycache__
+tests/__pycache__

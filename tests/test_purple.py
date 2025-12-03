@@ -1,4 +1,4 @@
-from clever import purple
+from clever.categories import purple
 
 p1 = purple.Purple()
 

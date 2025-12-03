@@ -1,4 +1,4 @@
-from clever import yellow
+from clever.categories import yellow
 
 y1 = yellow.Yellow()
 

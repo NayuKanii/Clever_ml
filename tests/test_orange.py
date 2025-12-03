@@ -1,4 +1,4 @@
-from clever import orange
+from clever.categories import orange
 
 o1 = orange.Orange()
 
