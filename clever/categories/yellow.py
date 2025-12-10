@@ -46,7 +46,7 @@ class Yellow:
 
         return coordinates
 
-    def cross(self, value, occurrence):
+    def fill_value(self, value, occurrence):
 
         coordinates = self.coordinates(value)
         row = coordinates[occurrence][0]

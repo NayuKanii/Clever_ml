@@ -41,7 +41,7 @@ class Blue:
 
         return coordinates
 
-    def cross(self, value):
+    def fill_value(self, value):
 
         coordinates = self.coordinates(value)
         row = coordinates[0]

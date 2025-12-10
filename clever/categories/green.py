@@ -33,7 +33,7 @@ class Green:
         self.actions = actions
         self.bonuses = bonuses
 
-    def cross(self, value):
+    def fill_value(self, value):
 
         if value >= self.row[green_index]:
 
