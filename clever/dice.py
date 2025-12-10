@@ -13,6 +13,7 @@ class Die():
 
         self.value = 0
         self.on_platter = False
+        self.distance_to_platter = 0
 
     def roll(self):
 
