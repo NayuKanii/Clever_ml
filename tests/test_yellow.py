@@ -8,9 +8,9 @@ def test_coordinates():
     assert y1.coordinates(3) == [[0, 0], [3, 1]]
 
 
-def test_cross():
+def test_fill_value():
 
-    y1.cross(6, 0)
+    y1.fill_value(6, 0)
     assert y1.grid == [
                     [3, 'x', 5, 'x'],
                     [2, 1, 'x', 5],

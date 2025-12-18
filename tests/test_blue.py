@@ -9,9 +9,9 @@ def test_coordinates():
     assert b1.coordinates(12) == [2, 3]
 
 
-def test_cross():
+def fill_value():
 
-    b1.cross(6)
+    b1.fill_value(6)
     assert b1.grid == [['', 2, 3, 4],
                        [5, 'x', 7, 8,],
                        [9, 10, 11, 12]]
@@ -19,6 +19,6 @@ def test_cross():
 
 def test_points():
 
-    b1.cross(2)
-    b1.cross(3)
-    assert b1.points() == 4
+    b1.fill_value(2)
+    b1.fill_value(3)
+    assert b1.points() == 2

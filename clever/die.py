@@ -12,7 +12,7 @@ class Die():
     def __init__(self):
 
         self.value = 0
-        self.on_platter = False
+        self.state = "hand"
         self.distance_to_platter = 0
 
     def roll(self):
@@ -23,7 +23,14 @@ class Die():
     def update_state(self, change):
 
         if change == "hand":
-            self.on_platter = False
+            self.state = "hand"
 
         elif change == "platter":
-            self.on_platter = True
+            self.state = "platter"
+
+        elif change == "chosen":
+            self.state = "chosen"
+
+        else:
+            print("Invalid change")
+            return
