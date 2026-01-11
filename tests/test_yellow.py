@@ -10,7 +10,7 @@ def test_coordinates():
 
 def test_fill_value():
 
-    y1.fill_value(6, 0)
+    y1.fill_value(6)
     assert y1.grid == [
                     [3, 'x', 5, 'x'],
                     [2, 1, 'x', 5],
