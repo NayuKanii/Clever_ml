@@ -46,14 +46,23 @@ class Yellow:
 
         return coordinates
 
+    def make_grid(self):
+
+        print_grid = ""
+
+        for row in self.grid:
+            print_grid += f"{row}\n"
+
+        return print_grid
+
     def fill_value(self, value):
 
         coordinates = self.coordinates(value)
-        occurrence = input(
+
+        occurrence = int(input(
             f"{self.grid}\n" +
-            f"Which occurence of {value} do you want to enter?\n"
-            "[1/2]\n")
-        assert occurrence == 1 or occurrence == 2
+            f"Which occurrence of {value} do you want to enter?\n"
+            "[1/2]\n")) - 1
 
         row = coordinates[occurrence][0]
         column = coordinates[occurrence][1]
