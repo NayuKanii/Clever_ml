@@ -32,6 +32,10 @@ def roll_available_dice():
             print(f"{key}: On silver platter")
             continue
 
+        elif dice[key].state == "chosen":
+            print(f"{key}: chosen")
+            continue
+
         else:
             dice[key].roll()
             print(f"{key}: {dice[key].value}")

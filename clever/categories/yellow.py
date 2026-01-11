@@ -48,19 +48,19 @@ class Yellow:
 
     def make_grid(self):
 
-        print_grid = ""
+        grid_2d = ""
 
         for row in self.grid:
-            print_grid += f"{row}\n"
+            grid_2d += f"{row}\n"
 
-        return print_grid
+        return grid_2d
 
     def fill_value(self, value):
 
         coordinates = self.coordinates(value)
 
         occurrence = int(input(
-            f"{self.grid}\n" +
+            f"{self.make_grid()}\n" +
             f"Which occurrence of {value} do you want to enter?\n"
             "[1/2]\n")) - 1
 
