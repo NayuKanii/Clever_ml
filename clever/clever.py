@@ -64,6 +64,10 @@ def validate_choice(choice):
         # remove reroll
         return False
 
+    elif dice[choice].state == "chosen":
+        choice = get_choice()
+        return validate_choice(choice)
+
     else:
         return True
 
