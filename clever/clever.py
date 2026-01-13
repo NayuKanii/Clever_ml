@@ -24,61 +24,62 @@ categories = {"yellow": yellow.Yellow(),
               }
 
 
-def roll_available_dice():
-    print(f"{SEPARATOR}Rolled dice:\n")
+def roll_dice():
+
     for key in dice:
 
         if dice[key].state == "platter":
-            print(f"{key}: On silver platter")
             continue
 
         elif dice[key].state == "chosen":
-            print(f"{key}: chosen")
             continue
 
         else:
             dice[key].roll()
-            print(f"{key}: {dice[key].value}")
+
+
+def display_dice_values():
+
+    print(SEPARATOR)
+
+    for key in dice:
+        if dice[key].state == "platter":
+            print(f"{key} : On silver platter")
+            continue
+
+        elif dice[key].state == "chosen":
+            print(f"{key} : chosen")
+            continue
+
+        else:
+            print(f"{key} : {dice[key].value}")
 
     print(SEPARATOR)
 
 
 def get_choice():
 
-    choice = ""
-    input_string = (
-        "Pick a die\n" +
-        "or\n" +
-        f"Use Reroll (enter r)\n{SEPARATOR}")
+    input_string = ("Pick a die\n" + SEPARATOR)
+    choice = input(input_string)
 
-    while choice not in dice.keys() or not "r":
-        choice = input(input_string)
+    print(SEPARATOR)
 
-    print("\n")
     return choice
 
 
 def validate_choice(choice):
 
-    if choice == 'r':
-        # remove reroll
-        return False
+    if choice not in dice.keys():
+        print("Please enter the dice name as displayed" + SEPARATOR)
+        return validate_choice(get_choice)
 
-    elif dice[choice].state == "chosen":
-        choice = get_choice()
-        return validate_choice(choice)
+    elif dice[choice].state == "On silver platter":
+        print("Die is on platter" + SEPARATOR)
+        return get_choice()
 
-    else:
-        return True
-
-
-def dice_roll_loop():
-
-    roll_available_dice()
-    choice = get_choice()
-
-    if not validate_choice(choice):
-        return dice_roll_loop()
+    elif dice[choice].state == "Chosen":
+        print("Die alreay chosen" + SEPARATOR)
+        return get_choice()
 
     else:
         return choice
@@ -93,18 +94,42 @@ def update_dice_states(chosen_die):
             continue
 
         else:
-            if dice[chosen_die].value > dice[key].value:
+            if dice[chosen_die].value > dice[key].value and dice[chosen_die].state != "chosen":
                 dice[key].state = "platter"
+
+
+def reset_dice_states():
+
+    for key in dice:
+        dice[key].state = "hand"
+
+
+def display_score():
+
+    for category in categories.keys():
+        print(f"{category} : {categories[category].points()}")
 
 
 def Clever():
 
-    for round_num in range(1, 7):
-        for throw_num in range(1, 4):
+    for round_number in range(1, 7):
+        print(f"ROUND NUMBER : {round_number}")
 
-            chosen_die = dice_roll_loop()
+        for throw_num in range(1, 4):
+            print(f"THROW NUMBER : {throw_num}")
+
+            roll_dice()
+            display_dice_values()
+
+            chosen_die = get_choice()
+            chosen_die = validate_choice(chosen_die)
             update_dice_states(chosen_die)
+
             categories[chosen_die].fill_value(dice[chosen_die].value)
+
+        reset_dice_states()
+
+    display_score()
 
 
 if __name__ == "__main__":
