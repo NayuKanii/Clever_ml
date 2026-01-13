@@ -93,9 +93,10 @@ def update_dice_states(chosen_die):
             dice[chosen_die].state = "chosen"
             continue
 
-        else:
-            if dice[chosen_die].value > dice[key].value and dice[chosen_die].state != "chosen":
-                dice[key].state = "platter"
+        elif (dice[chosen_die].value > dice[key].value and
+              dice[chosen_die].state != "chosen"):
+
+            dice[key].state = "platter"
 
 
 def reset_dice_states():
@@ -106,8 +107,11 @@ def reset_dice_states():
 
 def display_score():
 
+    score = 0
     for category in categories.keys():
-        print(f"{category} : {categories[category].points()}")
+        score += categories[category].points()
+
+    print(f"Total score: {score}")
 
 
 def Clever():
