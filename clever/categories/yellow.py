@@ -59,10 +59,10 @@ class Yellow:
 
         coordinates = self.coordinates(value)
 
-        occurrence = int(input(
-            f"{self.make_grid()}\n" +
-            f"Which occurrence of {value} do you want to enter?\n"
-            "[1/2]\n")) - 1
+        occurrence = int(
+            input(f"{self.make_grid()}\n" +
+                  f"Which occurrence of {value} do you want to enter?" +
+                  "[1/2]\n")) - 1
 
         row = coordinates[occurrence][0]
         column = coordinates[occurrence][1]
