@@ -35,7 +35,7 @@ class Green:
 
     def fill_value(self, value):
 
-        if value >= self.row[green_index]:
+        if int(value) >= self.row[green_index]:
 
             self.row[green_index] = 'x'
             self.index += 1
