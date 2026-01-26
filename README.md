@@ -1,5 +1,5 @@
 # Clever_ml
-Clever is a dice game in which the goal is to get as many points as possible. I want to discover, through use of machine learning, if there are patterns that lead to ending up with more points.
+Clever is a dice game in which the goal is to get as many points as possible. I want to discover, through use of machine learning, if there is a dominant strategy to the game.
 
 To do this I intend to do the following:
 
