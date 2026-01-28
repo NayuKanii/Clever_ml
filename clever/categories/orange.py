@@ -31,7 +31,7 @@ class Orange():
         self.actions = orange_actions
         self.bonuses = orange_bonuses
 
-    def fill_value(self, value):
+    def enter_value(self, value):
 
         if self.index not in self.multipliers.keys():
 

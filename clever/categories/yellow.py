@@ -55,7 +55,7 @@ class Yellow:
 
         return grid_2d
 
-    def fill_value(self, value):
+    def enter_value(self, value):
 
         coordinates = self.coordinates(value)
 

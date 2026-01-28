@@ -30,7 +30,7 @@ class Purple():
         self.actions = purple_actions
         self.bonuses = purple_bonuses
 
-    def fill_value(self, value):
+    def enter_value(self, value):
 
         self.row[self.index] = value
         self.index += 1

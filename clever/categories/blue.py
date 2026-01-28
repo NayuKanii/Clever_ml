@@ -41,7 +41,7 @@ class Blue:
 
         return coordinates
 
-    def fill_value(self, value):
+    def enter_value(self, value):
 
         coordinates = self.coordinates(value)
         row = coordinates[0]
