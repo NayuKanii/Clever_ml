@@ -55,14 +55,20 @@ class Yellow:
 
         return grid_2d
 
-    def enter_value(self, value):
+    def enter_value(self, value, occurrence=0):
+        """
+        Enter a value at the specified occurrence.
 
+        Args:
+            value: the die value to enter
+            occurrence: which occurrence of this value (0 or 1 for most values)
+        """
         coordinates = self.coordinates(value)
 
-        occurrence = int(
-            input(f"{self.make_grid()}\n" +
-                  f"Which occurrence of {value} do you want to enter?" +
-                  "[1/2]\n")) - 1
+        # Make sure the occurrence is valid
+        if occurrence >= len(coordinates):
+            raise ValueError(
+                f"Occurrence {occurrence} is invalid for value {value}")
 
         row = coordinates[occurrence][0]
         column = coordinates[occurrence][1]

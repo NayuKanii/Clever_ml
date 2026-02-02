@@ -5,9 +5,9 @@ import copy
 
 
 class CleverGame:
-    """
+    '''
     Docstring for CleverGame
-    """
+    '''
 
     def __init__(self):
 
@@ -42,19 +42,21 @@ class CleverGame:
         self.chosen_value = None
 
     def reset(self):
-        """
+        '''
         Reset game to initial state
-        """
+        '''
         self.__init__()
         return self.get_state()
 
-    def get_state(self):
-        """
+    def get_state(self): #  !!! CONTINUE HERE!!!
+        '''
         Return game state as dictionary
-        """
+        '''
         return {
-            'dice_values': {name: die.value for name, die in self.dice.items()},
-            'dice_states': {name: die.state for name, die in self.dice.items()},
+            'dice_values':
+            {name: die.value for name, die in self.dice.items()},
+            'dice_states':
+            {name: die.state for name, die in self.dice.items()},
             'current_round': self.current_round,
             'current_throw': self.current_throw,
             'phase': self.phase,
@@ -66,9 +68,9 @@ class CleverGame:
         }
 
     def get_legal_actions(self):
-        """
+        '''
         Returns list of legal actions
-        """
+        '''
         if self.phase == "NEED_ROLL":
             return [{'action_type': 'roll'}]
 
@@ -95,7 +97,7 @@ class CleverGame:
         return []
 
     def step(self, action):
-        """
+        '''
         Execute one action and advance game state
 
         args:
@@ -107,7 +109,7 @@ class CleverGame:
             reward: reward for this action
             done: whether the game is over
             info: additional info
-        """
+        '''
         current_score = self.get_total_score()
 
         # Execute action based on phase
@@ -141,19 +143,19 @@ class CleverGame:
         }
 
         return state, reward, done, info
-    
+
     def _roll_dice(self):
-        """
+        '''
         Roll all dice that are in hand
-        """
+        '''
         for die in self.dice.values():
             if die.state == "hand":
                 die.roll()
 
     def _choose_die(self, die_name):
-        """
+        '''
         Agent chooses a die
-        """
+        '''
         self.chosen_die = die_name
 
         # Update dice states
@@ -172,17 +174,17 @@ class CleverGame:
             self.phase = "NEED_PLACEMENT"
 
     def _assign_white_to_category(self, category_name):
-        """
+        '''
         Assign white die to a category
-        """
+        '''
         self.chosen_die_name = category_name
         self._determine_value()
         self.phase = "NEED_PLACEMENT"
 
     def _determine_value(self):
-        """
+        '''
         Determine the true value to be entered into a category
-        """
+        '''
         if self.chosen_die_name == "blue":
             # Blue value is blue + white
             self.chosen_value = (self.dice["blue"].value +
@@ -192,15 +194,15 @@ class CleverGame:
             self.chosen_value = self.dice[self.chosen_die_name].value
 
     def _enter_value(self):
-        """
+        '''
         Enter the value into it's category
-        """
+        '''
         self.categories[self.chosen_die_name].enter_value(self.chosen_value)
 
     def _advance_turn(self):
-        """
+        '''
         Move to next throw or round
-        """
+        '''
         self.current_throw += 1
 
         if self.current_throw > self.max_throws:
@@ -219,38 +221,39 @@ class CleverGame:
             self.phase = "NEED_ROLL"
 
     def _reset_dice_states(self):
-        """
+        '''
         Resets all the dice to hand
-        """
+        '''
         for die in self.dice.values():
             die.state = "hand"
 
     def get_score(self):
-        """
+        '''
         Calculate the current score
-        """
+        '''
         total = 0
         for category in self.categories.values():
             total += category.points()
         return total
 
     def is_game_over(self):
-        """
+        '''
         Verify whether game has ended or not
-        """
+        '''
         return self.phase == "GAME_OVER"
 
 
 # Code for manual testing
 def play_manual_game():
-    """Play game manually for testing"""
+    '''Play game manually for testing'''
     game = CleverGame()
 
     while not game.is_game_over():
         state = game.get_state()
         legal_actions = game.get_legal_actions()
 
-        print(f"\nRound {state['current_round']}, Throw {state['current_throw']}")
+        print(f"\nRound {state['current_round']},",
+              f"Throw {state['current_throw']}")
         print(f"Phase: {state['phase']}")
         print(f"Dice: {state['dice_values']}")
 
