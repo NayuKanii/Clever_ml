@@ -56,7 +56,7 @@ class CleverEnv:
                 self.action_to_game[action_index] = action
                 action_index += 1
 
-        # Placemten action for blue
+        # Placement action for blue
         for value in range(2, 13):
 
             action = {
@@ -112,7 +112,7 @@ class CleverEnv:
         state = self.game.get_state()
         observation_parts = []
 
-        # Dice values normalised to 0 - 1
+        # Dice values normalized to 0 - 1
         for die_name in ["white", "yellow", "blue",
                          "green", "orange", "purple"]:
             observation_parts.append(state["dice_values"][die_name] / 6.0)
@@ -133,7 +133,7 @@ class CleverEnv:
         observation_parts.append(state["current_throw"] / 3.0)
 
         # Flattening each category's grid
-        # Yelllow gird -> 4x4, so 16 cells
+        # Yellow gird -> 4x4, so 16 cells
         yellow_grid = state["yellow_grid"]
         for row in yellow_grid:
             for cell in row:

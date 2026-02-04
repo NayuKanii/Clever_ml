@@ -48,23 +48,33 @@ class CleverGame:
         self.__init__()
         return self.get_state()
 
-    def get_state(self): #  !!! CONTINUE HERE!!!
+    def get_state(self):
         '''
         Return game state as dictionary
         '''
         return {
-            'dice_values':
+            "dice_values":
             {name: die.value for name, die in self.dice.items()},
-            'dice_states':
+            "dice_states":
             {name: die.state for name, die in self.dice.items()},
-            'current_round': self.current_round,
-            'current_throw': self.current_throw,
-            'phase': self.phase,
-            'yellow_grid': copy.deepcopy(self.categories['yellow'].grid),
-            'blue_grid': copy.deepcopy(self.categories['blue'].grid),
-            'green_grid': copy.deepcopy(self.categories['green'].grid),
-            'orange_grid': copy.deepcopy(self.categories['orange'].grid),
-            'purple_grid': copy.deepcopy(self.categories['purple'].grid),
+
+            "current_round": self.current_round,
+            "current_throw": self.current_throw,
+            
+            "phase": self.phase,
+
+            "yellow_grid": copy.deepcopy(self.categories["yellow"].grid),
+
+            "blue_grid": copy.deepcopy(self.categories["blue"].grid),
+            
+            "green_grid": copy.deepcopy(self.categories["green"].grid),
+            "green_index": self.categories["green"].index,
+            
+            "orange_grid": copy.deepcopy(self.categories["orange"].grid),
+            "orange_index": self.categories["orange"].index,
+
+            "purple_grid": copy.deepcopy(self.categories["purple"].grid),
+            "purple_index": self.categories["purple"].index,
         }
 
     def get_legal_actions(self):
@@ -72,7 +82,7 @@ class CleverGame:
         Returns list of legal actions
         '''
         if self.phase == "NEED_ROLL":
-            return [{'action_type': 'roll'}]
+            return [{"action_type": "roll"}]
 
         elif self.phase == "NEED_DIE_CHOICE":
             legal_dice = []
@@ -96,13 +106,66 @@ class CleverGame:
 
         return []
 
-    def step(self, action):
+    def _get_enter_actions(self):
+        '''
+        Adds the correct enter action to the agent's available action list,
+        based on the chosen category
+        '''
+        actions = []
+
+        if self.chosen_die_name == "yellow":
+            
+            coordinates = (
+            self.categories["yellow"].coordinates(self.chosen_value) )
+
+            for index, coordinate in enumerate(coordinates):
+                
+                actions.append({
+                    "action_type": "enter_yellow",
+                    "value": self.chosen_value,
+                    "occurrence": index,
+                })
+
+        elif self.chosen_die_name == "blue":
+            
+            coordinates = self.categories["blue"].coordinates(self.chosen_value)
+
+            if coordinates:  # Checking if valid coordinates are found
+
+                actions.append({
+                    "action_type": "enter_blue",
+                    "value": self.chosen_value,
+                })
+
+        elif self.chosen_die_name == "green":
+            
+            green_index = self.categories["green"].index
+            if self.chosen_value >= self.categories["green"].row[green_index]:
+                
+                actions.append({"action_type": "enter_green"})
+
+        elif self.chosen_die_name == "orange":
+            actions.append({"action_type": "enter_orange"})
+
+        elif self.chosen_die_name == "purple":
+            
+            purple_previous_index = self.categories["purple"].index - 1
+            if (self.chosen_value == 6 or 
+                self.chosen_value >= 
+                self.categories["purple"].row[purple_previous_index]):
+
+                actions.append({"action_type": "enter_purple"})
+
+        return actions
+
+
+    def step(self, action):  # !!!CONTINUE HERE!!!
         '''
         Execute one action and advance game state
 
         args:
             action: dictionary with action info,
-            e.g. {'action_type': 'choose_die', 'die_name': 'yellow'}
+            e.g. {"action_type": "choose_die", "die_name": "yellow"}
 
         returns:
             state: the new game state
@@ -252,10 +315,10 @@ def play_manual_game():
         state = game.get_state()
         legal_actions = game.get_legal_actions()
 
-        print(f"\nRound {state['current_round']},",
-              f"Throw {state['current_throw']}")
-        print(f"Phase: {state['phase']}")
-        print(f"Dice: {state['dice_values']}")
+        print(f"\nRound {state["current_round"]},",
+              f"Throw {state["current_throw"]}")
+        print(f"Phase: {state["phase"]}")
+        print(f"Dice: {state["dice_values"]}")
 
         print("\nLegal actions:")
         for i, action in enumerate(legal_actions):
@@ -265,7 +328,7 @@ def play_manual_game():
         action = legal_actions[choice]
 
         state, reward, done, info = game.step(action)
-        print(f"Reward: {reward}, Score: {info['score']}")
+        print(f"Reward: {reward}, Score: {info["score"]}")
 
     print(f"\nGame Over! Final score: {game.get_total_score()}")
 
