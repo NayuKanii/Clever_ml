@@ -38,7 +38,7 @@ class CleverGame:
 
         # Variables for game phase
         self.phase = "NEED_ROLL"
-        self.chosen_die = None
+        self.chosen_die_name = None
         self.chosen_value = None
 
     def reset(self):
@@ -60,20 +60,20 @@ class CleverGame:
 
             "current_round": self.current_round,
             "current_throw": self.current_throw,
-            
+
             "phase": self.phase,
 
             "yellow_grid": copy.deepcopy(self.categories["yellow"].grid),
 
             "blue_grid": copy.deepcopy(self.categories["blue"].grid),
-            
-            "green_grid": copy.deepcopy(self.categories["green"].grid),
+
+            "green_row": copy.deepcopy(self.categories["green"].row),
             "green_index": self.categories["green"].index,
-            
-            "orange_grid": copy.deepcopy(self.categories["orange"].grid),
+
+            "orange_row": copy.deepcopy(self.categories["orange"].row),
             "orange_index": self.categories["orange"].index,
 
-            "purple_grid": copy.deepcopy(self.categories["purple"].grid),
+            "purple_row": copy.deepcopy(self.categories["purple"].row),
             "purple_index": self.categories["purple"].index,
         }
 
@@ -88,23 +88,95 @@ class CleverGame:
             legal_dice = []
 
             for name, die in self.dice.items():
-                if die.state == "hand":  # Only dice in hand can be rolled
-                    legal_dice.append({"action_type": "choose_die",
-                                       "die_name": name})
+                if die.state == "hand":
+                    # Check if this die can actually be placed
+                    if self._can_place_die(name, die.value):
+                        legal_dice.append({"action_type": "choose_die",
+                                           "die_name": name})
             return legal_dice
 
         elif self.phase == "NEED_CATEGORY":
             # If the white die was chosen, a category needs to be specified
-            return [
-                {"action_type": "need_category", "category": cat}
-                for cat in self.categories.keys()
-            ]
+            # But only return categories where the value can actually be placed
+            legal_categories = []
+            white_value = self.dice["white"].value
+
+            for cat in self.categories.keys():
+                if self._can_place_in_category(cat, white_value):
+                    legal_categories.append({"action_type": "need_category",
+                                            "category": cat})
+
+            # If no categories available, skip to next round
+            if len(legal_categories) == 0:
+                print("No valid categories, skipping to next round.")
+                self._skip_to_next_round()
+                return self.get_legal_actions()
+
+            return legal_categories
 
         elif self.phase == "NEED_PLACEMENT":
-            # Enter the value of the chosen die into it's category
-            return [{"action_type": "enter_value"}]
+            return self._get_enter_actions()
 
         return []
+
+    def _can_place_die(self, die_name, die_value):
+        '''
+        Check if a die can be placed according to game rules.
+        This prevents choosing dice that have no valid placement.
+        '''
+        if die_name == "white":
+            # White can be used if ANY category can accept it
+            for cat in self.categories.keys():
+                if self._can_place_in_category(cat, die_value):
+                    return True
+            return False
+        else:
+            # For colored dice, check if it can be placed in its own category
+            return self._can_place_in_category(die_name, die_value)
+
+    def _can_place_in_category(self, category_name, value):
+        '''
+        Check if a value can be placed in a specific category.
+        Returns True if there's at least one valid placement.
+        '''
+        if category_name == 'yellow':
+            coords = self.categories['yellow'].coordinates(value)
+            # Can place if there are any available coordinates
+            return len(coords) > 0
+
+        elif category_name == 'blue':
+            # For blue, the value is blue + white
+            blue_value = self.dice['blue'].value
+            white_value = self.dice['white'].value
+            total_value = blue_value + white_value
+            coords = self.categories['blue'].coordinates(total_value)
+            return coords is not None and len(coords) > 0
+
+        elif category_name == 'green':
+            current_required = (
+                self.categories['green'].row[self.categories['green'].index])
+            return value >= current_required
+
+        elif category_name == 'orange':
+            # Orange always accepts values (unless full)
+            return self.categories['orange'].index <= 11
+
+        elif category_name == 'purple':
+            purple_index = self.categories['purple'].index
+
+            # Purple full?
+            if purple_index > 11:
+                return False
+
+            # First entry?
+            if purple_index == 1:
+                return True
+
+            # Check if value is valid based on previous
+            previous_value = self.categories['purple'].row[purple_index - 1]
+            return previous_value == 6 or value > previous_value
+
+        return False
 
     def _get_enter_actions(self):
         '''
@@ -113,53 +185,34 @@ class CleverGame:
         '''
         actions = []
 
-        if self.chosen_die_name == "yellow":
-            
-            coordinates = (
-            self.categories["yellow"].coordinates(self.chosen_value) )
-
-            for index, coordinate in enumerate(coordinates):
-                
+        if self.chosen_die_name == 'yellow':
+            # Yellow: may have multiple occurrences of the same value
+            coords = self.categories['yellow'].coordinates(self.chosen_value)
+            for i, coord in enumerate(coords):
                 actions.append({
-                    "action_type": "enter_yellow",
-                    "value": self.chosen_value,
-                    "occurrence": index,
+                    'action_type': 'enter_yellow',
+                    'occurrence': i
                 })
 
-        elif self.chosen_die_name == "blue":
-            
-            coordinates = self.categories["blue"].coordinates(self.chosen_value)
+        elif self.chosen_die_name == 'blue':
+            # Blue: only one spot per value
+            actions.append({'action_type': 'enter_blue'})
 
-            if coordinates:  # Checking if valid coordinates are found
+        elif self.chosen_die_name == 'green':
+            # Green: automatic placement at current index
+            actions.append({'action_type': 'enter_green'})
 
-                actions.append({
-                    "action_type": "enter_blue",
-                    "value": self.chosen_value,
-                })
+        elif self.chosen_die_name == 'orange':
+            # Orange: automatic placement at current index
+            actions.append({'action_type': 'enter_orange'})
 
-        elif self.chosen_die_name == "green":
-            
-            green_index = self.categories["green"].index
-            if self.chosen_value >= self.categories["green"].row[green_index]:
-                
-                actions.append({"action_type": "enter_green"})
-
-        elif self.chosen_die_name == "orange":
-            actions.append({"action_type": "enter_orange"})
-
-        elif self.chosen_die_name == "purple":
-            
-            purple_previous_index = self.categories["purple"].index - 1
-            if (self.chosen_value == 6 or 
-                self.chosen_value >= 
-                self.categories["purple"].row[purple_previous_index]):
-
-                actions.append({"action_type": "enter_purple"})
+        elif self.chosen_die_name == 'purple':
+            # Purple: automatic placement at current index
+            actions.append({'action_type': 'enter_purple'})
 
         return actions
 
-
-    def step(self, action):  # !!!CONTINUE HERE!!!
+    def step(self, action):
         '''
         Execute one action and advance game state
 
@@ -173,7 +226,7 @@ class CleverGame:
             done: whether the game is over
             info: additional info
         '''
-        current_score = self.get_total_score()
+        current_score = self.get_score()
 
         # Execute action based on phase
         if action["action_type"] == "roll":
@@ -186,16 +239,33 @@ class CleverGame:
         elif action["action_type"] == "need_category":
             self._assign_white_to_category(action["category"])
 
-        elif action["action_type"] == "enter_value":
-            self._enter_value(action["die_name"])
+        # Entering values for each category
+        elif action["action_type"] == "enter_yellow":
+            self._enter_yellow(action["occurrence"])
+            self._advance_turn()
+
+        elif action["action_type"] == "enter_blue":
+            self._enter_blue()
+            self._advance_turn()
+
+        elif action["action_type"] == "enter_green":
+            self._enter_green()
+            self._advance_turn()
+
+        elif action["action_type"] == "enter_orange":
+            self._enter_orange()
+            self._advance_turn()
+
+        elif action["action_type"] == "enter_purple":
+            self._enter_purple()
             self._advance_turn()
 
         # Calculate reward
-        new_score = self.get_total_score()
+        new_score = self.get_score()
         reward = new_score - current_score
 
         # Check if game is done
-        done = (self.phase == "GAME_ OVER")
+        done = (self.phase == "GAME_OVER")
 
         # Return RL tuple for agent
         state = self.get_state()
@@ -206,6 +276,38 @@ class CleverGame:
         }
 
         return state, reward, done, info
+
+    def _enter_yellow(self, occurence):
+        '''
+        Cross off the value in the grid at the specified occurence
+        '''
+        coordinates = self.categories["yellow"].coordinates(self.chosen_value)
+        row, col = coordinates[occurence]
+        self.categories["yellow"].grid[row][col] = 'x'
+
+    def _enter_blue(self):
+        '''
+        Cross off the value in the grid
+        '''
+        self.categories["blue"].enter_value(self.chosen_value)
+
+    def _enter_green(self):
+        '''
+        Cross off the next box in the green row
+        '''
+        self.categories["green"].enter_value(self.chosen_value)
+
+    def _enter_orange(self):
+        '''
+        Enter the value into the orange row
+        '''
+        self.categories["orange"].enter_value(self.chosen_value)
+
+    def _enter_purple(self):
+        '''
+        Enter the value into the purple row
+        '''
+        self.categories["purple"].enter_value(self.chosen_value)
 
     def _roll_dice(self):
         '''
@@ -219,14 +321,14 @@ class CleverGame:
         '''
         Agent chooses a die
         '''
-        self.chosen_die = die_name
+        self.chosen_die_name = die_name
 
-        # Update dice states
-        chosen_die_value = self.dice[die_name].value
+        # Update dice states (smaller dice go to platter)
+        chosen_value = self.dice[die_name].value
         for name, die in self.dice.items():
             if name == die_name:
                 die.state = "chosen"
-            elif die.value < chosen_die_value and die.state == "hand":
+            elif die.value < chosen_value and die.state == "hand":
                 die.state = "platter"
 
         # Check if white die was chosen
@@ -234,7 +336,19 @@ class CleverGame:
             self.phase = "NEED_CATEGORY"
         else:
             self._determine_value()
-            self.phase = "NEED_PLACEMENT"
+            self.phase = "NEED_PLACEMENT"  # We know placement is valid
+
+    def _skip_to_next_round(self):
+        """Skip remaining throws and move to next round"""
+        self._reset_dice_states()
+        self.current_throw = 1
+        self.current_round += 1
+
+        if self.current_round > self.max_rounds:
+            self.phase = "GAME_OVER"
+
+        else:
+            self.phase = "NEED_ROLL"
 
     def _assign_white_to_category(self, category_name):
         '''
@@ -295,8 +409,8 @@ class CleverGame:
         Calculate the current score
         '''
         total = 0
-        for category in self.categories.values():
-            total += category.points()
+        for category in self.categories:
+            total += self.categories[category].points()
         return total
 
     def is_game_over(self):

@@ -13,7 +13,7 @@ yellow_grid = [
     ['x', 3, 4, 6],
     ]
 
-yellow_points = [10, 14, 16, 20]
+yellow_column_points = [10, 14, 16, 20]
 
 yellow_actions = ["extra_die"]
 
@@ -24,12 +24,12 @@ class Yellow:
 
     def __init__(self,
                  grid=yellow_grid,
-                 points=yellow_points,
+                 column_points=yellow_column_points,
                  actions=yellow_actions,
                  bonuses=yellow_bonuses):
 
         self.grid = grid
-        self.points = points
+        self.column_points = column_points
         self.actions = actions
         self.bonuses = bonuses
         pass
@@ -73,3 +73,25 @@ class Yellow:
         row = coordinates[occurrence][0]
         column = coordinates[occurrence][1]
         self.grid[row][column] = 'x'
+
+    def points(self):
+        '''
+        Calculate the current points for the yellow category
+        '''
+        total = 0
+
+        # Check each column (0-3)
+        for col in range(4):
+            column_complete = True
+
+            # Check if every cell in this column is crossed
+            for row in range(4):
+                if self.grid[row][col] != 'x':
+                    column_complete = False
+                    break
+
+            # If column is complete, add its point value
+            if column_complete:
+                total += self.column_points[col]
+
+        return total
